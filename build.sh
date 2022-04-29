@@ -18,12 +18,12 @@ LATEST=$(git tag | sort -rV | head -n 1)
 if [ -f ./latest ]; then
     old= cat ./latest
 else
-    echo ${LATEST} > latest
+    echo $LATEST > latest
     old=1
 fi
 
-if  test $old != $LATEST ; then
-    echo ${LATEST} > latest
+if  test "$old" != "$LATEST" ; then
+    echo $LATEST > latest
     git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git
     cd omnibus-gitlab/docker
     echo "PACKAGECLOUD_REPO=gitlab-ee" > RELEASE 
