@@ -33,6 +33,7 @@ jobs:
         run: |
           chmod +x check-version.sh create-tags.sh latest-tag.sh
           sudo git fetch --tags && ./check-version.sh && ./create-tags.sh
+          sudo ./latest-tag.sh
 
       - name: Push changes
         uses: ad-m/github-push-action@master
