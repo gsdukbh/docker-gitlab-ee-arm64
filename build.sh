@@ -31,11 +31,13 @@ if  test $old != LATEST ; then
     echo "RELEASE_VERSION=${LATEST}" >> RELEASE
     echo "DOWNLOAD_URL=https://packages.gitlab.com/gitlab/gitlab-ee/packages/ubuntu/focal/gitlab-ee_${LATEST}_arm64.deb/download.deb" >> RELEASE
     sed -i 's/\-recommends/\-recommends libatomic1/' Dockerfile
-    sudo docker buildx  build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./ 
+    sudo docker buildx  build --platform linux/arm64 -t ${{DOCKER_NAME}}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./ 
     cd ../../
-    docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
-    docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD} 
-    docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
-    git add latest
-    git commit -m "build version ${LATEST}"
+    sudo docker tag ${{DOCKER_NAME}}/gitlab-ee-arm64:${LATEST} ${{DOCKER_NAME}}/gitlab-ee-arm64:latest;
+    sudo docker login --username ${{DOCKER_NAME}} --password ${{DOCKER_PASSWORD}} 
+    sudo docker push -a ${{DOCKER_NAME}}/gitlab-ee-arm64
+    sudo git config --local user.email ${{MAIL}}
+    sudo git config --local user.name ${{MY_NAME}}
+    sudo git add latest
+    sudo git commit -m "build version ${LATEST}"
 fi
