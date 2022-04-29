@@ -12,6 +12,6 @@ cat version_list | while read version; do
         git tag ${version}
     fi
 done
-if [ "${HAVE_TAG}" == "false"];then
+if [ "${HAVE_TAG}" == "false" ];then
     echo "hhhhhhhh"
 fi
