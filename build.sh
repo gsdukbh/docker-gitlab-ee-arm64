@@ -33,7 +33,7 @@ if  test $old != LATEST ; then
     sed -i 's/\-recommends/\-recommends libatomic1/' Dockerfile
     docker buildx  build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./ 
     cd ../../
-    docker tag ${{DOCKER_NAME}}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
+    docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
     docker login --username ${secrets.DOCKER_NAME} --password ${DOCKER_PASSWORD} 
     docker push -a ${secrets.DOCKER_NAME}/gitlab-ee-arm64
     git config --local user.email ${MAIL}
