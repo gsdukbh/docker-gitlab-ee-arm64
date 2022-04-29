@@ -34,5 +34,6 @@ jobs:
           chmod +x check-version.sh create-tags.sh latest-tag.sh
           sudo git fetch --tags && ./check-version.sh && ./create-tags.sh
           sudo git push --tags https://gsdukbh:{{secrets.MY_GIT_TOKEN}}@github.com/gsdukbh/docker-gitlab-ee-arm64.git
+          
 
           
