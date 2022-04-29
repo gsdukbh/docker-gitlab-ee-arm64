@@ -21,6 +21,7 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    environment: token
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -32,7 +33,7 @@ jobs:
         run: |
           chmod +x check-version.sh create-tags.sh latest-tag.sh
           sudo git fetch --tags && ./check-version.sh && ./create-tags.sh
-          
+
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
