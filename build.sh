@@ -34,10 +34,10 @@ if  test $old != LATEST ; then
     docker buildx  build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./ 
     cd ../../
     docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
-    docker login --username ${secrets.DOCKER_NAME} --password ${DOCKER_PASSWORD} 
-    docker push -a ${secrets.DOCKER_NAME}/gitlab-ee-arm64
+    docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD} 
+    docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
     git config --local user.email ${MAIL}
-    git config --local user.name ${secrets.MY_NAME}
+    git config --local user.name ${MY_NAME}
     git add latest
     git commit -m "build version ${LATEST}"
 fi
