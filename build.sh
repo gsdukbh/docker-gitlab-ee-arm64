@@ -22,7 +22,7 @@ else
     old=1
 fi
 
-if  test $old != LATEST ; then
+if  test $old != $LATEST ; then
     echo ${LATEST} > latest
     git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git
     cd omnibus-gitlab/docker
