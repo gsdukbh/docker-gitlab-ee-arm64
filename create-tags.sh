@@ -19,10 +19,10 @@ if [ -f ./latest ]; then
     old= cat ./latest
 else
     echo LATEST > latest
-    old =l
+    old=1
 fi
 
-if  test $old != LATEST; then
+if  test $old != LATEST ; then
     echo LATEST > latest
     sudo git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git
     cd omnibus-gitlab/docker
