@@ -23,7 +23,7 @@ else
 fi
 
 if  test $old != LATEST ; then
-    echo LATEST > latest
+    echo ${LATEST} > latest
     git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git
     cd omnibus-gitlab/docker
     echo "PACKAGECLOUD_REPO=gitlab-ee" > RELEASE 
