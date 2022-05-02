@@ -38,5 +38,7 @@ if  test "$old" != "$LATEST" ; then
     docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD} 
     docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
     git add latest
+    git config --local user.email ${MAIL}
+    git config --local user.name ${MY_NAME}
     git commit -a -m "build version ${LATEST}"
 fi
