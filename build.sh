@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat version_list | while read version; do
+cat latest | while read latest; do
     echo ${version}
     HAVE_TAG=false
     for tag in $(git tag); do
