@@ -43,7 +43,8 @@ for LATEST in "${no_match_tags[@]}"; do
     docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
     docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD}
     docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
-    git add latest version
+    git add latest
+    git add version 
     git config --local user.email ${MAIL}
     git config --local user.name ${MY_NAME}
     git commit -a -m "build version ${LATEST}"
