@@ -2,8 +2,7 @@
 
 # 定义一个数组来保存没有匹配的标签
 no_match_tags=()
-cat latest | while read latest; do
-    echo ${latest}
+while read -r latest; do
     HAVE_TAG=false
     for tag in $(git tag); do
         if [ "${latest}" == "${tag}" ]; then
@@ -12,9 +11,10 @@ cat latest | while read latest; do
     done
     if ! ${HAVE_TAG}; then
         git tag ${latest}
+        echo ${latest}
         no_match_tags+=("${latest}")
     fi
-done
+done < latest
 
 # LATEST=$(git tag | sort -rV | head -n 1)
 
@@ -24,6 +24,7 @@ done
 #     echo $LATEST > latest
 #     old=1
 # fi
+
 
 # 构建缺失的标签镜像
 for LATEST in "${no_match_tags[@]}"; do
