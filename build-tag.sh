@@ -1,5 +1,4 @@
     echo "Processing tag: ${LATEST}"
-    echo $LATEST >> version
     git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git
     cd omnibus-gitlab/docker
     echo "PACKAGECLOUD_REPO=gitlab-ee" > RELEASE
@@ -10,6 +9,7 @@
     docker run --privileged --rm tonistiigi/binfmt --install all
     docker buildx  build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
     cd ../../
+    docker images
     docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
     docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD}
     docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
