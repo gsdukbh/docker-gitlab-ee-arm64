@@ -33,7 +33,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run build
         env: 
-          DOCKER_NAME: ${{ secrets.DOCKER_NAME }}
+          DOCKER_NAME: gsdukbh
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           MAIL: ${{ secrets.MAIL }}
           MY_NAME: ${{ secrets.MY_NAME}}
