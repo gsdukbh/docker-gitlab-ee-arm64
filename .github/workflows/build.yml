@@ -1,21 +1,21 @@
 # This is a basic workflow to help you get started with Actions
 
-name: check-build-tags
+name: build-tags
 
 # Controls when the workflow will run
 on:
-  schedule:
-      - cron: '0 0 */1 * *'
+#   schedule:
+#       - cron: '0 0 */1 * *'
   # Triggers the workflow on push or pull request events but only for the main branch
 #   push:
 #     branches: [ main ]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      tag:
-        description: "SSH connection to Actions"
-        required: false
-        default: "false"
+      tags:
+        description: 'build tags'
+        required: true
+        type: string
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -34,17 +34,12 @@ jobs:
       - name: Run build
         env: 
           DOCKER_NAME: gsdukbh
+          LATEST: ${{inputs.tags}}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           MAIL: ${{ secrets.MAIL }}
           MY_NAME: ${{ secrets.MY_NAME}}
         run: |
-          chmod +x check-version.sh build.sh 
-          sudo git fetch --tags && ./check-version.sh && ./build.sh
-          sudo git push --tags https://gsdukbh:{{secrets.MY_GIT_TOKEN}}@github.com/gsdukbh/docker-gitlab-ee-arm64.git
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.MY_GIT_TOKEN }}
-          branch: main
+          chmod +x build-tag.sh && ./build-tag.sh 
+
 
           
