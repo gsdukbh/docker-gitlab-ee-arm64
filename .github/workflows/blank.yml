@@ -38,10 +38,9 @@ jobs:
           MAIL: ${{ secrets.MAIL }}
           MY_NAME: ${{ secrets.MY_NAME}}
         run: |
-          chmod +x test.sh && ./test.sh
-          # chmod +x check-version.sh build.sh 
-          # sudo git fetch --tags && ./check-version.sh && ./build.sh
-          # sudo git push --tags https://gsdukbh:{{secrets.MY_GIT_TOKEN}}@github.com/gsdukbh/docker-gitlab-ee-arm64.git
+          chmod +x check-version.sh build.sh 
+          sudo git fetch --tags && ./check-version.sh && ./build.sh
+          sudo git push --tags https://gsdukbh:{{secrets.MY_GIT_TOKEN}}@github.com/gsdukbh/docker-gitlab-ee-arm64.git
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
