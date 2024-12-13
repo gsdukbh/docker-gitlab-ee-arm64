@@ -3,6 +3,8 @@ build gitlab-ee for arm64 images
 
 -- test
 
+[upgrade path](https://gitlab-com.gitlab.io/support/toolbox/upgrade-path/)
+
 # how to use this
 
 docker compose 
