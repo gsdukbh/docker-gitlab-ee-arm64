@@ -1,14 +1,16 @@
 #!/bin/bash
 
-# 定义一个数组来保存没有匹配的标签
+# Define an array to store tags that do not match existing ones
 no_match_tags=()
 while read -r latest; do
     HAVE_TAG=false
+    # Check if the current tag exists in the git repository
     for tag in $(git tag); do
         if [ "${latest}" == "${tag}" ]; then
             HAVE_TAG=true
         fi
     done
+    # If the tag does not exist, create it and add it to the no_match_tags array
     if ! ${HAVE_TAG}; then
         git tag ${latest}
         echo ${latest}
@@ -25,13 +27,14 @@ done < latest
 #     old=1
 # fi
 
-
-# 构建缺失的标签镜像
+# Build images for the missing tags
 for LATEST in "${no_match_tags[@]}"; do
     echo "Processing tag: ${LATEST}"
     echo $LATEST >> version
+    # Clone the GitLab Omnibus repository
     git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git
     cd omnibus-gitlab/docker
+    # Set up the release configuration for arm64 architecture
     echo "TARGETARCH=arm64" >> RELEASE
     echo "RELEASE_PACKAGE=gitlab-ee" >> RELEASE
     echo "RELEASE_VERSION=${LATEST}" >> RELEASE

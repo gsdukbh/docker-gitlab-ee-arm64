@@ -1,7 +1,14 @@
 # docker-gitlab-ee-arm64
+
 build gitlab-ee for arm64 images
 
--- test
+ > 此项目是为了在 **[Raspberry Pi4](https://www.raspberrypi.com/)** 上运行Gitlab 而创建。
+
+This project aims to provide **ARM64 architecture** Docker image build support for **GitLab EE**. Through automated scripts and GitHub Actions workflows, users can easily build, manage, and publish GitLab EE images for ARM64.
+
+
+
+# how upgrade
 
 [upgrade path](https://gitlab-com.gitlab.io/support/toolbox/upgrade-path/)
 
