@@ -17,7 +17,21 @@ This project aims to provide **ARM64 architecture** Docker image build support f
 
 # how to use this
 
-docker compose 
+## Using Docker Compose
+
+To deploy GitLab EE for ARM64 using Docker Compose, follow these steps:
+
+1. Ensure you have Docker and Docker Compose installed on your system.
+2. Create a `docker-compose.yml` file with the configuration provided above.
+3. Run the following command to start the services:
+
+  ```bash
+  docker-compose up -d
+  ```
+
+4. Access GitLab in your browser at `http://<your-server-ip>`.
+
+For additional configuration or troubleshooting, refer to the official GitLab documentation.
 
 ```yaml
 version: '3.7'
