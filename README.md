@@ -7,6 +7,9 @@ build gitlab-ee for arm64 images
 This project aims to provide **ARM64 architecture** Docker image build support for **GitLab EE**. Through automated scripts and GitHub Actions workflows, users can easily build, manage, and publish GitLab EE images for ARM64.
 
 
+# learn this project
+
+[learn.md](LEARN.md)
 
 # how upgrade
 
