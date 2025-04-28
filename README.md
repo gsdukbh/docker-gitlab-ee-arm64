@@ -2,7 +2,7 @@
 
 build gitlab-ee for arm64 images
 
-[![check-build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml)   [![check-build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml)
+[![build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/build.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/build.yml)  [![check-build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml)
 
  > 此项目是为了在 **[Raspberry Pi4](https://www.raspberrypi.com/)** 上运行Gitlab 而创建。
 
