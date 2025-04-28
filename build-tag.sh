@@ -13,20 +13,20 @@ echo "DOWNLOAD_URL_arm64=https://packages.gitlab.com/gitlab/gitlab-ee/packages/u
 sed -i 's/\-recommends/\-recommends libatomic1/' Dockerfile
 
 # Enable multi-platform builds using binfmt.
-docker run --privileged --rm tonistiigi/binfmt --install all
+sudo docker run --privileged --rm tonistiigi/binfmt --install all
 
 # Build the Docker image for the ARM64 platform.
-docker buildx build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
+sudo docker buildx build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
 
 cd ../../ # Navigate back to the root directory.
 
-docker images # List all Docker images.
+sudo docker images # List all Docker images.
 
 # Tag the built image with the 'latest' tag.
-docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
+sudo docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
 
 # Log in to Docker Hub using the provided credentials.
-docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD}
+sudo docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD}
 
 # Push all tags of the image to Docker Hub.
-docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
+sudo docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
