@@ -41,7 +41,7 @@ for LATEST in "${no_match_tags[@]}"; do
     echo "DOWNLOAD_URL_arm64=https://packages.gitlab.com/gitlab/gitlab-ee/packages/ubuntu/focal/gitlab-ee_${LATEST}_arm64.deb/download.deb" >> RELEASE
     sed -i 's/\-recommends/\-recommends libatomic1/' Dockerfile
     sudo docker run --privileged --rm tonistiigi/binfmt --install all
-    sudo docker buildx  build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
+    sudo docker buildx  build --add-host=host.docker.internal:host-gateway  --dns=8.8.8.8  --dns=223.5.5.5 --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
     cd ../../
     sudo docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
     sudo docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD}
