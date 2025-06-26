@@ -16,7 +16,7 @@ sed -i 's/\-recommends/\-recommends libatomic1/' Dockerfile
 sudo docker run --privileged --rm tonistiigi/binfmt --install all
 
 # Build the Docker image for the ARM64 platform.
-sudo docker buildx build --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
+sudo docker buildx build  --add-host=host.docker.internal:host-gateway  --dns=8.8.8.8  --dns=223.5.5.5 --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
 
 cd ../../ # Navigate back to the root directory.
 
