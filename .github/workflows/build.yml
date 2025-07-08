@@ -19,8 +19,41 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # test self runner 
+  probe-self-hosted:
+    name:  Probe Self-hosted Runner
+    runs-on: self-hosted  
+    timeout-minutes: 1 
+    steps:
+      - name: Ping
+        run: echo "Self-hosted runner is online."
+
+  build-on-github:
+    name: Fallback Build on GitHub-hosted
+    needs: probe-self-hosted # 同样依赖于探针
+    if: failure()
+    runs-on: ubuntu-latest
+    environment: token
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a set of commands using the runners shell
+      - name: Run build
+        env: 
+          DOCKER_NAME: gsdukbh
+          LATEST: ${{inputs.tags}}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          MAIL: ${{ secrets.MAIL }}
+          MY_NAME: ${{ secrets.MY_NAME}}
+        run: |
+          chmod +x build-tag.sh && ./build-tag.sh 
+ 
   # This workflow contains a single job called "build"
   build:
+    needs: probe-self-hosted 
+    if: success() 
     # The type of runner that the job will run on
     runs-on: self-hosted
     environment: token
