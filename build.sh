@@ -51,7 +51,10 @@ for LATEST in "${no_match_tags[@]}"; do
     git config --local user.email ${MAIL}
     git config --local user.name ${MY_NAME}
     git commit -a -m "build version ${LATEST}"
-    
+    # clear docker images
+    sudo docker rmi ${DOCKER_NAME}/gitlab-ee-arm64:latest
+    sudo docker rmi ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST}
+    echo "clear docker images"
 done
 
 # if  test "$old" != "$LATEST" ; then

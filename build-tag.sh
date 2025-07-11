@@ -31,3 +31,9 @@ sudo docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD}
 
 # Push all tags of the image to Docker Hub.
 sudo docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
+echo "Pushed image for tag: ${LATEST}" # Print confirmation of the pushed image.
+
+# clear docker images
+sudo docker rmi ${DOCKER_NAME}/gitlab-ee-arm64:latest
+sudo docker rmi ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST}
+echo "clear docker images"
