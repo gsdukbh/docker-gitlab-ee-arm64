@@ -1,6 +1,7 @@
 echo "Processing tag: ${LATEST}" # Print the tag being processed.
 git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git # Clone the GitLab Omnibus repository.
 cd omnibus-gitlab/docker # Navigate to the Docker directory.
+pwd 
 
 # Create a RELEASE file with necessary environment variables for the build.
 echo "PACKAGECLOUD_REPO=gitlab-ee" > RELEASE
