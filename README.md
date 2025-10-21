@@ -4,13 +4,13 @@ build gitlab-ee for arm64 images
 
 [![build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/build.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/build.yml)  [![check-build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml)
 
-> ⚠️ **重要更新（2025+）**：
-> - **GitLab 官方从 18.1 版本开始已原生支持 ARM64 架构** 🎉
-> - 如果你需要 **GitLab 18.1 或更新版本**，建议直接使用官方镜像：`gitlab/gitlab-ee:latest`
-> - 本项目主要为 **GitLab 18.0 及更早版本** 提供 ARM64 支持
-> - 官方镜像地址：https://hub.docker.com/r/gitlab/gitlab-ee
+> ⚠️ **Important Update (2025+)**:
+> - **GitLab officially supports ARM64 architecture starting from version 18.1** 🎉
+> - If you need **GitLab 18.1 or newer**, we recommend using the official image: `gitlab/gitlab-ee:latest`
+> - This project primarily provides ARM64 support for **GitLab 18.0 and earlier versions**
+> - Official image: https://hub.docker.com/r/gitlab/gitlab-ee
 
- > 此项目是为了在 **[Raspberry Pi4](https://www.raspberrypi.com/)** 上运行Gitlab 而创建。
+> This project was created to run GitLab on **[Raspberry Pi 4](https://www.raspberrypi.com/)**.
 
 This project aims to provide **ARM64 architecture** Docker image build support for **GitLab EE**. Through automated scripts and GitHub Actions workflows, users can easily build, manage, and publish GitLab EE images for ARM64.
 
