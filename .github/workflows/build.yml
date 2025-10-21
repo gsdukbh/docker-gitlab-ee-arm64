@@ -16,12 +16,23 @@ on:
         description: 'build tags'
         required: true
         type: string
+      runner:
+        description: 'Select runner type'
+        required: false
+        type: choice
+        default: 'auto'
+        options:
+          - auto
+          - self-hosted
+          - github-hosted
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # test self runner - 快速探测是否可用
   probe-self-hosted:
     name:  Probe Self-hosted Runner
+    # 只有在 auto 或 self-hosted 模式下才探测
+    if: inputs.runner == 'auto' || inputs.runner == 'self-hosted'
     runs-on: self-hosted  
     timeout-minutes: 1  # 1分钟超时,快速检测 runner 是否空闲
     continue-on-error: true  # 允许此作业失败而不影响工作流
@@ -35,7 +46,11 @@ jobs:
   build-self-hosted:
     name: Build on Self-hosted Runner
     needs: probe-self-hosted 
-    if: needs.probe-self-hosted.result == 'success'  # 只有探针成功才运行
+    # 在 self-hosted 模式下强制使用,或在 auto 模式下探针成功时使用
+    if: |
+      always() && 
+      (inputs.runner == 'self-hosted' || 
+       (inputs.runner == 'auto' && needs.probe-self-hosted.result == 'success'))
     runs-on: self-hosted  
     environment: token
     steps:
@@ -55,8 +70,11 @@ jobs:
   build-on-github:
     name: Build on GitHub-hosted Runner
     needs: probe-self-hosted
-    # 当探针失败(超时/runner忙碌/离线)时立即运行
-    if: needs.probe-self-hosted.result != 'success'
+    # 在 github-hosted 模式下强制使用,或在 auto 模式下探针失败时使用
+    if: |
+      always() && 
+      (inputs.runner == 'github-hosted' || 
+       (inputs.runner == 'auto' && needs.probe-self-hosted.result != 'success'))
     runs-on: ubuntu-latest
     environment: token
     steps:
