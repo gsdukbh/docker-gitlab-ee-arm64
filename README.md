@@ -4,9 +4,57 @@ build gitlab-ee for arm64 images
 
 [![build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/build.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/build.yml)  [![check-build-tags](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml/badge.svg)](https://github.com/gsdukbh/docker-gitlab-ee-arm64/actions/workflows/blank.yml)
 
+> ⚠️ **重要更新（2025+）**：
+> - **GitLab 官方从 18.1 版本开始已原生支持 ARM64 架构** 🎉
+> - 如果你需要 **GitLab 18.1 或更新版本**，建议直接使用官方镜像：`gitlab/gitlab-ee:latest`
+> - 本项目主要为 **GitLab 18.0 及更早版本** 提供 ARM64 支持
+> - 官方镜像地址：https://hub.docker.com/r/gitlab/gitlab-ee
+
  > 此项目是为了在 **[Raspberry Pi4](https://www.raspberrypi.com/)** 上运行Gitlab 而创建。
 
 This project aims to provide **ARM64 architecture** Docker image build support for **GitLab EE**. Through automated scripts and GitHub Actions workflows, users can easily build, manage, and publish GitLab EE images for ARM64.
+
+## 🆕 GitLab Official ARM64 Support
+
+**GitLab officially supports ARM64 starting from version 18.1!**
+
+### For GitLab 18.1 and newer (Recommended)
+
+Use the official multi-architecture image:
+
+```bash
+# Docker will automatically pull the ARM64 version on ARM64 platforms
+docker pull gitlab/gitlab-ee:latest
+# Or specify a version (18.1+)
+docker pull gitlab/gitlab-ee:18.1.0-ee.0
+```
+
+```yaml
+version: '3.7'
+services:
+  gitlab:
+    image: gitlab/gitlab-ee:latest  # Official ARM64 support
+    container_name: gitlab
+    volumes:
+      - './gitlab/config:/etc/gitlab'
+      - './gitlab/log:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+```
+
+### For GitLab 18.0 and earlier
+
+Use this project's images for older versions that don't have official ARM64 support:
+
+```bash
+docker pull gsdukbh/gitlab-ee-arm64:18.0.6-ee.0
+docker pull gsdukbh/gitlab-ee-arm64:17.11.7-ee.0
+docker pull gsdukbh/gitlab-ee-arm64:16.11.10-ee.0
+```
 
 
 # learn this project
@@ -17,14 +65,47 @@ This project aims to provide **ARM64 architecture** Docker image build support f
 
 [upgrade path](https://gitlab-com.gitlab.io/support/toolbox/upgrade-path/)
 
+---
+
 # how to use this
 
-## Using Docker Compose
+## Option 1: Using Official GitLab Images (GitLab 18.1+) - Recommended
 
-To deploy GitLab EE for ARM64 using Docker Compose, follow these steps:
+For GitLab version 18.1 and above, use the official images with native ARM64 support:
+
+```yaml
+version: '3.7'
+services:
+  gitlab:
+    image: gitlab/gitlab-ee:latest  # Official multi-arch image
+    container_name: gitlab
+    hostname: 'gitlab.example.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.example.com'
+    volumes:
+      - './gitlab/config:/etc/gitlab'
+      - './gitlab/log:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+      - '22:22'
+```
+
+Then run:
+```bash
+docker-compose up -d
+```
+
+## Option 2: Using This Project's Images (GitLab 18.0 and earlier)
+
+To deploy older GitLab EE versions for ARM64 using Docker Compose:
 
 1. Ensure you have Docker and Docker Compose installed on your system.
-2. Create a `docker-compose.yml` file with the configuration provided above.
+2. Create a `docker-compose.yml` file with the configuration below.
 3. Run the following command to start the services:
 
   ```bash
@@ -35,15 +116,18 @@ To deploy GitLab EE for ARM64 using Docker Compose, follow these steps:
 
 For additional configuration or troubleshooting, refer to the official GitLab documentation.
 
+**Example docker-compose.yml for GitLab 17.x/18.0:**
+
 ```yaml
 version: '3.7'
 services:
   gitlab:
-    image: gsdukbh/gitlab-ee-arm64:latest
+    image: gsdukbh/gitlab-ee-arm64:18.0.6-ee.0  # Use specific version tag
     container_name: gitlab
     volumes:
-      - ./license.rb:/opt/gitlab/embedded/service/gitlab-rails/ee/app/models/license.rb
-      - ./license_key.pub://opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub 
+      # Optional: license files for GitLab EE features
+      # - ./license.rb:/opt/gitlab/embedded/service/gitlab-rails/ee/app/models/license.rb
+      # - ./license_key.pub:/opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub 
       - './gitlab/config:/etc/gitlab'
       - './gitlab/log:/var/log/gitlab'
       - './gitlab/data:/var/opt/gitlab'
@@ -81,3 +165,15 @@ volumes:
   es_data:       
 
 ```
+
+## Version Support
+
+| GitLab Version | ARM64 Support | Recommended Image |
+|---------------|---------------|-------------------|
+| 18.1+ | ✅ Official | `gitlab/gitlab-ee:latest` or `gitlab/gitlab-ee:18.x.x-ee.0` |
+| 18.0 | ⚠️ This Project | `gsdukbh/gitlab-ee-arm64:18.0.x-ee.0` |
+| 17.x | ⚠️ This Project | `gsdukbh/gitlab-ee-arm64:17.x.x-ee.0` |
+| 16.x | ⚠️ This Project | `gsdukbh/gitlab-ee-arm64:16.x.x-ee.0` |
+| 15.x and older | ⚠️ This Project | `gsdukbh/gitlab-ee-arm64:15.x.x-ee.0` |
+
+**Note**: For GitLab 18.1+, we strongly recommend using the official images for better support and updates.

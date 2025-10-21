@@ -1,39 +1,96 @@
-echo "Processing tag: ${LATEST}" # Print the tag being processed.
-git clone https://gitlab.com/gitlab-org/omnibus-gitlab.git # Clone the GitLab Omnibus repository.
-cd omnibus-gitlab/docker # Navigate to the Docker directory.
-pwd 
+#!/bin/bash
+set -euo pipefail  # Exit on error, undefined variables, and pipe failures
+
+# Validate required environment variables
+: "${DOCKER_NAME:?Environment variable DOCKER_NAME is required}"
+: "${DOCKER_PASSWORD:?Environment variable DOCKER_PASSWORD is required}"
+: "${LATEST:?Environment variable LATEST is required}"
+
+echo "==================================="
+echo "Processing tag: ${LATEST}"
+echo "==================================="
+
+# Clean up any previous clone
+rm -rf omnibus-gitlab
+
+# Clone the GitLab Omnibus repository
+echo "Cloning GitLab Omnibus repository..."
+git clone --depth=1 https://gitlab.com/gitlab-org/omnibus-gitlab.git
+
+cd omnibus-gitlab/docker
+pwd
 
 # Create a RELEASE file with necessary environment variables for the build.
-echo "PACKAGECLOUD_REPO=gitlab-ee" > RELEASE
-echo "TARGETARCH=arm64" >> RELEASE
-echo "RELEASE_PACKAGE=gitlab-ee" >> RELEASE
-echo "RELEASE_VERSION=${LATEST}" >> RELEASE
-echo "DOWNLOAD_URL_arm64=https://packages.gitlab.com/gitlab/gitlab-ee/packages/ubuntu/focal/gitlab-ee_${LATEST}_arm64.deb/download.deb" >> RELEASE
+echo "Creating RELEASE file for ARM64 build..."
+cat > RELEASE << EOF
+PACKAGECLOUD_REPO=gitlab-ee
+RELEASE_PACKAGE=gitlab-ee
+RELEASE_VERSION=${LATEST}
+DOWNLOAD_URL_arm64=https://packages.gitlab.com/gitlab/gitlab-ee/packages/ubuntu/jammy/gitlab-ee_${LATEST}_arm64.deb/download.deb
+EOF
 
-# Modify the Dockerfile to include the 'libatomic1' package as a dependency.
-sed -i 's/\-recommends/\-recommends libatomic1/' Dockerfile
+echo "RELEASE file contents:"
+cat RELEASE
 
-# Enable multi-platform builds using binfmt.
+# Check if libatomic1 is already in Dockerfile (official version already includes it)
+if grep -q "libatomic1" Dockerfile; then
+    echo "✅ libatomic1 already present in Dockerfile (official version)"
+else
+    echo "⚠️  Adding libatomic1 to Dockerfile..."
+    sed -i.bak 's/--no-install-recommends \\/--no-install-recommends libatomic1 \\/' Dockerfile
+fi
+
+# Enable multi-platform builds using binfmt
+echo "Setting up QEMU for ARM64 emulation..."
 sudo docker run --privileged --rm tonistiigi/binfmt --install all
 
-# Build the Docker image for the ARM64 platform.
-sudo docker buildx build  --platform linux/arm64 -t ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} -f Dockerfile ./
+# Create or use existing buildx builder
+echo "Setting up Docker buildx..."
+sudo docker buildx create --use --name gitlab-builder --driver docker-container 2>/dev/null || sudo docker buildx use gitlab-builder || true
+sudo docker buildx inspect --bootstrap
 
-cd ../../ # Navigate back to the root directory.
+# Build the Docker image for the ARM64 platform
+echo "Building Docker image for ARM64..."
+echo "Image: ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST}"
 
-sudo docker images # List all Docker images.
+sudo docker buildx build \
+  --platform linux/arm64 \
+  --build-arg TARGETARCH=arm64 \
+  --build-arg BASE_IMAGE=ubuntu:24.04 \
+  --tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} \
+  --tag ${DOCKER_NAME}/gitlab-ee-arm64:latest \
+  --file Dockerfile \
+  --load \
+  ./
 
-# Tag the built image with the 'latest' tag.
-sudo docker tag ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} ${DOCKER_NAME}/gitlab-ee-arm64:latest;
+echo "✅ Build completed successfully"
 
-# Log in to Docker Hub using the provided credentials.
-sudo docker login --username ${DOCKER_NAME} --password ${DOCKER_PASSWORD}
+# Navigate back to the root directory
+cd ../../
 
-# Push all tags of the image to Docker Hub.
-sudo docker push -a ${DOCKER_NAME}/gitlab-ee-arm64
-echo "Pushed image for tag: ${LATEST}" # Print confirmation of the pushed image.
+# List built images
+echo "Built images:"
+sudo docker images | grep gitlab-ee-arm64
 
-# clear docker images
-sudo docker rmi ${DOCKER_NAME}/gitlab-ee-arm64:latest
-sudo docker rmi ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST}
-echo "clear docker images"
+# Log in to Docker Hub
+echo "Logging in to Docker Hub..."
+echo "${DOCKER_PASSWORD}" | sudo docker login --username ${DOCKER_NAME} --password-stdin
+
+# Push images to Docker Hub
+echo "Pushing images to Docker Hub..."
+sudo docker push ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST}
+sudo docker push ${DOCKER_NAME}/gitlab-ee-arm64:latest
+
+echo "✅ Successfully pushed image for tag: ${LATEST}"
+
+# Clean up local images to save disk space
+echo "Cleaning up local images..."
+sudo docker rmi -f ${DOCKER_NAME}/gitlab-ee-arm64:latest 2>/dev/null || true
+sudo docker rmi -f ${DOCKER_NAME}/gitlab-ee-arm64:${LATEST} 2>/dev/null || true
+
+# Clean up cloned repository
+echo "Cleaning up cloned repository..."
+cd ../..
+rm -rf omnibus-gitlab
+
+echo "✅ Build process completed successfully for ${LATEST}"
