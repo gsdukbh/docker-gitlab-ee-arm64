@@ -19,28 +19,50 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # test self runner 
+  # test self runner - 快速探测是否可用
   probe-self-hosted:
     name:  Probe Self-hosted Runner
     runs-on: self-hosted  
-    timeout-minutes: 1 
+    timeout-minutes: 1  # 1分钟超时,快速检测 runner 是否空闲
+    continue-on-error: true  # 允许此作业失败而不影响工作流
     steps:
-      - name: Ping
-        run: echo "Self-hosted runner is online."
+      - name: Check Runner Availability
+        run: |
+          echo "Self-hosted runner is available and not busy."
+          echo "Runner will handle this build task."
 
+  # 优先在自托管服务器上构建
+  build-self-hosted:
+    name: Build on Self-hosted Runner
+    needs: probe-self-hosted 
+    if: needs.probe-self-hosted.result == 'success'  # 只有探针成功才运行
+    runs-on: self-hosted  
+    environment: token
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run build on self-hosted
+        env: 
+          DOCKER_NAME: gsdukbh
+          LATEST: ${{inputs.tags}}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          MAIL: ${{ secrets.MAIL }}
+          MY_NAME: ${{ secrets.MY_NAME}}
+        run: |
+          chmod +x build-tag.sh && ./build-tag.sh
+
+  # 在 GitHub 服务器上构建 - 当自托管 runner 忙碌或离线时
   build-on-github:
-    name: Fallback Build on GitHub-hosted
-    needs: probe-self-hosted # 同样依赖于探针
-    if: failure()
+    name: Build on GitHub-hosted Runner
+    needs: probe-self-hosted
+    # 当探针失败(超时/runner忙碌/离线)时立即运行
+    if: needs.probe-self-hosted.result != 'success'
     runs-on: ubuntu-latest
     environment: token
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      # Runs a set of commands using the runners shell
-      - name: Run build
+      - name: Run build on GitHub-hosted
         env: 
           DOCKER_NAME: gsdukbh
           LATEST: ${{inputs.tags}}
@@ -48,30 +70,7 @@ jobs:
           MAIL: ${{ secrets.MAIL }}
           MY_NAME: ${{ secrets.MY_NAME}}
         run: |
-          chmod +x build-tag.sh && ./build-tag.sh 
- 
-  # This workflow contains a single job called "build"
-  build:
-    needs: probe-self-hosted 
-    if: success() 
-    # The type of runner that the job will run on
-    runs-on: self-hosted
-    environment: token
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-
-      # Runs a set of commands using the runners shell
-      - name: Run build
-        env: 
-          DOCKER_NAME: gsdukbh
-          LATEST: ${{inputs.tags}}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          MAIL: ${{ secrets.MAIL }}
-          MY_NAME: ${{ secrets.MY_NAME}}
-        run: |
+          echo "Self-hosted runner is busy or offline, using GitHub-hosted runner."
           chmod +x build-tag.sh && ./build-tag.sh 
 
 
