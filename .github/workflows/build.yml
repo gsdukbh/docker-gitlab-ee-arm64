@@ -54,7 +54,7 @@ jobs:
     runs-on: self-hosted  
     environment: token
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Run build on self-hosted
         env: 
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: token
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
 
       - name: Run build on GitHub-hosted
         env: 
